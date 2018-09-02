@@ -6,6 +6,7 @@ from direction import Direction
 from food import Food
 from enum import Enum # Hur fungerar import i python?
 from point import Point # ska python filer vara lowercasade?
+import game_settings
 
 # Hur kör man tests i python?
 
@@ -13,44 +14,24 @@ from point import Point # ska python filer vara lowercasade?
 # Hur kan man fixa med kollisions.
 # Kan jag koppla detta till machine-learning så den lär sig spela snake?
 
-WIDTH = 600
-HEIGHT = 600
-
-
-def player_collide_with_food(snake, food):
-    delta_pos = snake.position - food.position
-    hypotenuse_sqr = delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y
-    both_radiuses = snake.circle.radius + food.circle.radius
-    both_radiuses_sqr = both_radiuses * both_radiuses
-
-    if both_radiuses_sqr < hypotenuse_sqr:
-        print("Not colliding")
-        snake.color = colors.WHITE
-    else:
-        print("Colliding")
-        snake.color = colors.BLUE
-
-    print("Delta pos: " + str(delta_pos)) # Kan man skapa + operatorer för klasser?
-    pass
-
 
 def flip_y(position):
     x = position.x
-    y = HEIGHT - position.y
+    y = game_settings.HEIGHT - position.y
     return (x, y)
 
 
 def draw_circle(position, radius, color):
     position = flip_y(position)
 
-    pygame.draw.circle(screen, color, position, radius)
+    pygame.draw.circle(screen, color, position, radius) # Hur fungerar denna?
 
 
 
 
 pygame.init()
 
-screen_size = [WIDTH, HEIGHT] # kan man resiza, köra fullscreen?
+screen_size = [game_settings.WIDTH, game_settings.HEIGHT] # kan man resiza, köra fullscreen?
 screen = pygame.display.set_mode(screen_size) # Vad gör denna?
 
 game_over = False
@@ -60,6 +41,23 @@ clock = pygame.time.Clock() # Vad får man här? Får man en reference?
 snake = Snake()
 
 food = Food()
+score = 0
+
+
+def player_collide_with_food(snake, food):
+    delta_pos = snake.position - food.position
+    hypotenuse_sqr = delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y
+    both_radiuses = snake.circle.radius + food.circle.radius
+    both_radiuses_sqr = both_radiuses * both_radiuses
+
+    if both_radiuses_sqr < hypotenuse_sqr:
+        snake.color = colors.WHITE
+    else:
+        snake.color = colors.BLUE
+        food.randomize_position()
+        global score
+        score += 1
+
 
 # Typisk game_loop.
 # 1. Kolla input
@@ -92,16 +90,22 @@ while not game_over:
 
     # Check collisions
     #snake
+
+
+
+    if not snake.is_inside():
+        print("Player lost")
     player_collide_with_food(snake, food)
 
     screen.fill(colors.BLACK) # Vad gör denna?
-    #pygame.draw.circle(screen, white, ball.position, 10) # Hur fungerar denna?
 
     draw_circle(snake.position, snake.circle.radius, snake.color)
 
     draw_circle(food.position, food.circle.radius, colors.YELLOW)
-    
 
+    font = pygame.font.SysFont("Comic Sans MS", 30) # hur funkar fonts
+    surface = font.render("Score: %d" % score, False, colors.BLUE) # vad händer? var är surface?
+    screen.blit(surface, (10, 10)) # hur funkar blit?
     # Skillnaden på tuple (50, 50) och list [50, 50]? Vrf används inte tuple?
 
     clock.tick(60) # Hur fungerar denna? Hur targetar den 60fps?

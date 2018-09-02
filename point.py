@@ -21,3 +21,8 @@ class Point:
     def __str__(self):
         return "x:%s y:%s" % (self.x, self.y)
 
+    def __mul__(self, other):
+        x = self.x * other
+        y = self.y * other
+        return Point(x, y)
+
