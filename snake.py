@@ -1,6 +1,7 @@
 import circle
 from point import Point
 from direction import Direction
+import colors
 
 
 class Snake:
@@ -9,6 +10,7 @@ class Snake:
      # Skillnaden på att skapa variabel direkt, och skapa den från constructorn
     # Finns private/protected/public i python?
     size = 10
+    color = colors.WHITE
 
     position = Point(50, 0)
 

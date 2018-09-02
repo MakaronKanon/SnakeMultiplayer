@@ -18,14 +18,25 @@ HEIGHT = 600
 
 
 def player_collide_with_food(snake, food):
-    #delta_pos = snake.position - food.position
-    #print("Delta pos: " + delta_pos) # Kan man skapa + operatorer för klasser?
+    delta_pos = snake.position - food.position
+    hypotenuse_sqr = delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y
+    both_radiuses = snake.circle.radius + food.circle.radius
+    both_radiuses_sqr = both_radiuses * both_radiuses
+
+    if both_radiuses_sqr < hypotenuse_sqr:
+        print("Not colliding")
+        snake.color = colors.WHITE
+    else:
+        print("Colliding")
+        snake.color = colors.BLUE
+
+    print("Delta pos: " + str(delta_pos)) # Kan man skapa + operatorer för klasser?
     pass
 
 
 def flip_y(position):
-    x = position[0]
-    y = HEIGHT - position[1]
+    x = position.x
+    y = HEIGHT - position.y
     return (x, y)
 
 
@@ -34,17 +45,8 @@ def draw_circle(position, radius, color):
 
     pygame.draw.circle(screen, color, position, radius)
 
-def draw_ball(ball): # Kan jag definera mina funktion under på något sätt som i c? Samma med klasser.
-    screen_pos = ball.position
-    x = screen_pos.x
-    y = HEIGHT - screen_pos.y
-
-    #screen_pos[1] = height - screen_pos[1] # Detta fungerar inte, får man en reference av list?
-    pygame.draw.circle(screen, white, (x, y), 10)
 
 
-black = (0, 0, 0)
-white = (255, 255, 255)
 
 pygame.init()
 
@@ -81,7 +83,7 @@ while not game_over:
             elif event.key == pygame.K_DOWN:
                 snake.direction = Direction.DOWN
 
-        print(event)
+        #print(event)
     if game_over:
         break
 
@@ -92,11 +94,13 @@ while not game_over:
     #snake
     player_collide_with_food(snake, food)
 
-    screen.fill(black) # Vad gör denna?
+    screen.fill(colors.BLACK) # Vad gör denna?
     #pygame.draw.circle(screen, white, ball.position, 10) # Hur fungerar denna?
-    draw_ball(snake)
 
-    draw_circle(food.position, food.radius, colors.WHITE)
+    draw_circle(snake.position, snake.circle.radius, snake.color)
+
+    draw_circle(food.position, food.circle.radius, colors.YELLOW)
+    
 
     # Skillnaden på tuple (50, 50) och list [50, 50]? Vrf används inte tuple?
 
